@@ -1,18 +1,21 @@
 const CONFIG = require('../../../config');
 
 class ChatManager {
-    constructor(db) {
-        this.db = db;
+    constructor({ mediator }) {
+        this.mediator = mediator;
+        this.EVENTS = mediator.getEventTypes();
+        this.TRIGGERS = mediator.getTriggerTypes();
     }
 
     setUserOnline(token) {
-        return this.db.setUserOnline(token, Date.now());
+        const timestamp = Date.now();
+        return this.mediator.get(this.TRIGGERS.SET_USER_ONLINE, { token, timestamp });
     }
 
     async getOnlineUsersList() {
         const now = Date.now();
         const offlineMs = CONFIG.OFFLINE_MS;
-        const allUsers = await this.db.getAllUsers();
+        const allUsers = await this.mediator.get(this.TRIGGERS.GET_ALL_USERS);
         return allUsers.map(function(u) {
             return {
                 id: u.id,
@@ -23,26 +26,39 @@ class ChatManager {
     }
 
     async updateChat(token, clientHash) {
-        const user = await this.db.getUserByToken(token);
+        const user = await this.mediator.get(this.TRIGGERS.GET_USER_BY_TOKEN, { token });
         if (!user) {
             return { error: true };
         }
         await this.setUserOnline(token);
-        const serverHash = await this.db.getMessagesHash();
+        const serverHash = await this.mediator.get(this.TRIGGERS.GET_MESSAGES_HASH);
         let messages = null;
         if (clientHash !== serverHash) {
-            messages = await this.db.getMessages();
+            messages = await this.mediator.get(this.TRIGGERS.GET_MESSAGES);
         }
         const users = await this.getOnlineUsersList();
+
+        this.mediator.call(this.EVENTS.CHAT_UPDATED, {
+            user,
+            hash: serverHash,
+            hasChanges: clientHash !== serverHash,
+        });
+
         return { hash: serverHash, messages: messages, users: users };
     }
 
     async sendMessage(token, text) {
-        const user = await this.db.getUserByToken(token);
+        const user = await this.mediator.get(this.TRIGGERS.GET_USER_BY_TOKEN, { token });
         if (!user) {
             return { error: true };
         }
-        await this.db.sendMessage(text, user.id);
+        await this.mediator.get(this.TRIGGERS.SEND_MESSAGE, { text, authorId: user.id });
+
+        this.mediator.call(this.EVENTS.MESSAGE_SENDED, {
+            user,
+            text,
+        });
+
         return { error: false };
     }
 }

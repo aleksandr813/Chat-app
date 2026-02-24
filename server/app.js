@@ -9,12 +9,19 @@ const ChatManager = require('./application/modules/chat/ChatManager');
 const { NAME, PORT, DATABASE } = CONFIG;
 
 const db = new DB({ DATABASE });
-const mediator = new Mediator();
-const userManager = new UserManager(db);
-const chatManager = new ChatManager(db);
+const mediator = new Mediator(CONFIG.MEDIATOR);
+
+const { TRIGGERS } = CONFIG.MEDIATOR;
+
+mediator.set(TRIGGERS.GET_MESSAGES_HASH, () => db.getMessagesHash());
+mediator.set(TRIGGERS.GET_MESSAGES, () => db.getMessages());
+mediator.set(TRIGGERS.SEND_MESSAGE, ({ text, authorId }) => db.sendMessage(text, authorId));
+
+const userManager = new UserManager({ mediator });
+const chatManager = new ChatManager({ mediator });
 
 app.use(express.static(`${__dirname}/public`));
-app.use('/', new Router({ mediator }));
+app.use('/', new Router({ userManager, chatManager }));
 
 function deinit() {
     db.destrucor();
