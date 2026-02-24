@@ -9,11 +9,12 @@ class UserManager {
 
         this.users = {} //Тут в качестве ключей guid'ы нужно
 
+        //Это перенадумать
         this.mediator.set(this.TRIGGERS.GET_USER_BY_TOKEN, ({ token }) => db.getUserByToken(token));
         this.mediator.set(this.TRIGGERS.SET_USER_ONLINE, ({ token, timestamp }) => db.setUserOnline(token, timestamp));
         this.mediator.set(this.TRIGGERS.GET_ALL_USERS, () => db.getAllUsers());
         this.mediator.set(this.TRIGGERS.REGISTER_USER, ({ username, password, token }) => db.registerUser(username, password, token));
-        this.mediator.set(this.TRIGGERS.LOGIN_USER, ({ username, password }) => db.loginUser(username, password));
+        this.mediator.set(this.TRIGGERS.LOGIN_USER, ({ username, password }) => this.loginUserTrigger(username, password));
     }
 
     check(token) {

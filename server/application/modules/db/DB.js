@@ -33,6 +33,10 @@ class DB {
         return this.orm.get("users", { token }, ["rowid as id", "username"]);
     }
 
+    getUserByName(username) {
+        return this.orm.get("users", { username }, ["rowid as id", "username"]);
+    }
+
     getAllUsers() {
         return this.orm.all("users", null, ["rowid as id", "username", "COALESCE(online, 0) as online"]);
     }

@@ -1,9 +1,9 @@
-module.exports = (userManager, chatManager) => {
+module.exports = (mediator) => {
     return async (req, res) => {
         const username = req.params.username;
         const password = req.params.password;
         try {
-            const user = await userManager.loginUser(username, password);
+            const user = await mediator.loginUserTrigger(username, password);
             if (user) {
                 res.send(user);
             } else {
