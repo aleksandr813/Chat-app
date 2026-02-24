@@ -7,9 +7,9 @@ class ChatManager {
         this.EVENTS = this.mediator.getEventTypes();
         this.TRIGGERS = this.mediator.getTriggerTypes();
 
-        mediator.set(TRIGGERS.GET_MESSAGES_HASH, () => db.getMessagesHash());
-        mediator.set(TRIGGERS.GET_MESSAGES, () => db.getMessages());
-        mediator.set(TRIGGERS.SEND_MESSAGE, ({ text, authorId }) => db.sendMessage(text, authorId));
+        this.mediator.set(this.TRIGGERS.GET_MESSAGES_HASH, () => db.getMessagesHash());
+        this.mediator.set(this.TRIGGERS.GET_MESSAGES, () => db.getMessages());
+        this.mediator.set(this.TRIGGERS.SEND_MESSAGE, ({ text, authorId }) => db.sendMessage(text, authorId));
     }
 
     setUserOnline(token) {
