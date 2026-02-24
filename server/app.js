@@ -11,14 +11,14 @@ const { NAME, PORT, DATABASE } = CONFIG;
 const db = new DB({ DATABASE });
 const mediator = new Mediator(CONFIG.MEDIATOR);
 
-const { TRIGGERS } = CONFIG.MEDIATOR;
-
 
 const userManager = new UserManager({ mediator, db });
 const chatManager = new ChatManager({ mediator, db });
 
+const router = new Router({ userManager, chatManager });
+
 app.use(express.static(`${__dirname}/public`));
-app.use('/', new Router({ userManager, chatManager }));
+app.use('/', router);
 
 function deinit() {
     db.destrucor();
