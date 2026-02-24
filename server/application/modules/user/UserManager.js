@@ -1,5 +1,6 @@
 class UserManager {
-    constructor ({ mediator }) {
+    constructor ({ mediator, db }) {
+        this.db = db;
         this.mediator = mediator;
         this.EVENTS = mediator.getEventTypes();
         this.TRIGGERS = mediator.getTriggerTypes();

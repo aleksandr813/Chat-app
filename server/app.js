@@ -13,12 +13,9 @@ const mediator = new Mediator(CONFIG.MEDIATOR);
 
 const { TRIGGERS } = CONFIG.MEDIATOR;
 
-mediator.set(TRIGGERS.GET_MESSAGES_HASH, () => db.getMessagesHash());
-mediator.set(TRIGGERS.GET_MESSAGES, () => db.getMessages());
-mediator.set(TRIGGERS.SEND_MESSAGE, ({ text, authorId }) => db.sendMessage(text, authorId));
 
-const userManager = new UserManager({ mediator });
-const chatManager = new ChatManager({ mediator });
+const userManager = new UserManager({ mediator, db });
+const chatManager = new ChatManager({ mediator, db });
 
 app.use(express.static(`${__dirname}/public`));
 app.use('/', new Router({ userManager, chatManager }));

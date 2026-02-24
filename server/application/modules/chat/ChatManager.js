@@ -1,10 +1,15 @@
 const CONFIG = require('../../../config');
 
 class ChatManager {
-    constructor({ mediator }) {
+    constructor({ mediator, db }) {
+        this.db = db;
         this.mediator = mediator;
-        this.EVENTS = mediator.getEventTypes();
-        this.TRIGGERS = mediator.getTriggerTypes();
+        this.EVENTS = this.mediator.getEventTypes();
+        this.TRIGGERS = this.mediator.getTriggerTypes();
+
+        mediator.set(TRIGGERS.GET_MESSAGES_HASH, () => db.getMessagesHash());
+        mediator.set(TRIGGERS.GET_MESSAGES, () => db.getMessages());
+        mediator.set(TRIGGERS.SEND_MESSAGE, ({ text, authorId }) => db.sendMessage(text, authorId));
     }
 
     setUserOnline(token) {
