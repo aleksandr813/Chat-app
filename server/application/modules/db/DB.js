@@ -8,12 +8,15 @@ class DB {
     }
 
     async registerUser(username, password, token) {
-        const result = await this.orm.insert("users", ["username", "token", "password"], [username, token, password]);
+        const result = await this.orm.insert("users", 
+            ["username", "token", "password"], 
+            [username, token, password]);
         return { username, token, id: result.id };
     }
 
     async loginUser(username, password) {
-        const row = await this.orm.get("users", { username }, ["rowid as id", "username", "password", "token"]);
+        const row = await this.orm.get("users", { username }, 
+            ["rowid as id", "username", "password", "token"]);
         
         if (!row || row.password !== password) {
             return null;
@@ -26,19 +29,23 @@ class DB {
     }
 
     getUserById(id) {
-        return this.orm.get("users", { id }, ["rowid as id", "username", "token", "online"]);
+        return this.orm.get("users", { id }, 
+            ["rowid as id", "username", "token", "online"]);
     }
 
     getUserByToken(token) {
-        return this.orm.get("users", { token }, ["rowid as id", "username"]);
+        return this.orm.get("users", { token }, 
+            ["rowid as id", "username"]);
     }
 
     getUserByName(username) {
-        return this.orm.get("users", { username }, ["rowid as id", "username"]);
+        return this.orm.get("users", { username }, 
+            ["rowid as id", "username"]);
     }
 
     getAllUsers() {
-        return this.orm.all("users", null, ["rowid as id", "username", "COALESCE(online, 0) as online"]);
+        return this.orm.all("users", null, 
+            ["rowid as id", "username", "COALESCE(online, 0) as online"]);
     }
 
     setUserOnline(token, timestamp) {
@@ -46,7 +53,8 @@ class DB {
     }
 
     async getMessagesHash() {
-        const result = await this.orm.get("messages", null, ["COUNT(*) as cnt", "COALESCE(MAX(id), 0) as maxId"]);
+        const result = await this.orm.get("messages", null, 
+            ["COUNT(*) as cnt", "COALESCE(MAX(id), 0) as maxId"]);
         return `${result.cnt}_${result.maxId}`;
     }
 

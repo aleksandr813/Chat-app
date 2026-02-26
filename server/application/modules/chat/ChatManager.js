@@ -1,11 +1,9 @@
 const CONFIG = require('../../../config');
+const BaseManager = require('../BaseManager');
 
-class ChatManager {
-    constructor({ mediator, db }) {
-        this.db = db;
-        this.mediator = mediator;
-        this.EVENTS = this.mediator.getEventTypes();
-        this.TRIGGERS = this.mediator.getTriggerTypes();
+class ChatManager extends BaseManager{
+    constructor({ params }) {
+        super();
 
         this.mediator.set(this.TRIGGERS.GET_MESSAGES_HASH, () => db.getMessagesHash());
         this.mediator.set(this.TRIGGERS.GET_MESSAGES, () => db.getMessages());

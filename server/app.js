@@ -12,8 +12,8 @@ const db = new DB({ DATABASE });
 const mediator = new Mediator(CONFIG.MEDIATOR);
 
 
-const userManager = new UserManager({ mediator, db });
-const chatManager = new ChatManager({ mediator, db });
+const userManager = new UserManager();
+const chatManager = new ChatManager();
 
 const router = new Router({ userManager, chatManager });
 

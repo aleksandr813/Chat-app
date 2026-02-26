@@ -1,11 +1,9 @@
 const User = require("./User");
+const BaseManager = require('../BaseManager');
 
-class UserManager {
-    constructor ({ mediator, db }) {
-        this.db = db;
-        this.mediator = mediator;
-        this.EVENTS = mediator.getEventTypes();
-        this.TRIGGERS = mediator.getTriggerTypes();
+class UserManager extends BaseManager {
+    constructor ({ params }) {
+        super();
 
         this.users = {} //Тут в качестве ключей guid'ы нужно
 
@@ -42,7 +40,7 @@ class UserManager {
             this.users[user.id] = user;
             return user.getSelf()
         }
-        return user;
+        return Answer.good(user);
     }
 }
 
